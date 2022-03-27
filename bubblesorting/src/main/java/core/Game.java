@@ -80,14 +80,14 @@ public class Game {
 	
 	private void fillContainer(Container container, String[] ballsFromProperties) {
 		Integer firstBall = 1;
-		Integer nPallineCreate;
+		Integer nBallsCreated;
 		for (String ballColour : ballsFromProperties) {
 			Ball ball;
 			if (mapColourBallsCreated.containsKey(ballColour) ) {
-				nPallineCreate = mapColourBallsCreated.get(ballColour);
-				nPallineCreate = nPallineCreate + 1;
-				mapColourBallsCreated.put(ballColour, nPallineCreate);
-				ball = new Ball(ballColour, nPallineCreate);
+				nBallsCreated = mapColourBallsCreated.get(ballColour);
+				nBallsCreated = nBallsCreated + 1;
+				mapColourBallsCreated.put(ballColour, nBallsCreated);
+				ball = new Ball(ballColour, nBallsCreated);
 			} else {
 				ball = new Ball(ballColour, firstBall);
 				mapColourBallsCreated.put(ballColour, firstBall);

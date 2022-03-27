@@ -15,12 +15,12 @@ public class OptionPopup {
 	private static String escMessage = "Are you sure you want to return to menu ?";
 	private static String errorMessage = "Error with ";
 	  
-	public static int ESC_popup() {
+	public static int esc_popup() {
 		return JOptionPane.showConfirmDialog(new JFrame(),escMessage ,
 				"Return to menu?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 	}
 	
-	public static int Error_popup(String type) {
+	public static int error_popup(String type) {
 		return JOptionPane.showConfirmDialog(new JFrame(),errorMessage + type ,
 				"ERROR!", JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
 	}

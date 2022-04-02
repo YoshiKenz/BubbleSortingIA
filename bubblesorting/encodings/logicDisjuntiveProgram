@@ -6,6 +6,7 @@ nContenitori(X) :- #count{ID : contenitore(ID)} = X.
 
 % Definisco I contenitori che hanno almeno una pallina inserita
 contenitoreConPalline(CONTENITORE) :- pallinaNelContenitore(_,CONTENITORE,_).
+
 % I contenitori che non hanno almeno una pallina inserita
 contenitoreVuoto(CONTENITORE) :- contenitore(CONTENITORE), not contenitoreConPalline(CONTENITORE).
 
@@ -18,9 +19,12 @@ ultimaPosContenitLib(CONTENITORE, POSIZIONE) :- contenitore(CONTENITORE), nPalli
 #max{POS2 : pallinaNelContenitore(PALLINAY, CONTENITORE, POS2)} = X, POSIZIONE =X + 1, POSIZIONE <= Y.
 ultimaPosContenitLib(CONTENITORE, POSIZIONE) :- contenitoreVuoto(CONTENITORE), POSIZIONE = 1.
 
-% Definisco le ultime palline nel contenitore, se il contenitore vuoto posso metterci qualsiasi colore
-ultimoColoreCont(CONTENITORE, COLORE) :- ultimaPosContenitLib(CONTENITORE, POSIZIONE), X = POSIZIONE -1,
-POSIZIONE > 1, pallinaNelContenitore(PALLINA,CONTENITORE,X), pallina(COLORE, PALLINA).
+% pallEstraibileDaCont("red_4","a"),  Definisco le ultime palline nel contenitore, se il contenitore vuoto posso metterci qualsiasi colore
+%ultimoColoreCont(CONTENITORE, COLORE) :-  ultimaPosContenitLib(CONTENITORE, POSIZIONE), X = POSIZIONE -1,
+%POSIZIONE > 1, pallinaNelContenitore(PALLINA,CONTENITORE,X), pallina(COLORE, PALLINA).
+ultimoColoreCont(CONTENITORE, COLORE) :- pallEstraibileDaCont(PALLINA,CONTENITORE), 
+pallina(COLORE,PALLINA).
+
 
 % Definisco quante palline hanno i Contenitori
 nPallineInContenitore(CONTENITORE, NUMERO) :- contenitore(CONTENITORE), NUMERO = #count{P : pallinaNelContenitore(P,CONTENITORE, _)}.
@@ -45,10 +49,12 @@ contenitoreColorato(CONTENITORE) :- nPallineInContenitore(CONTENITORE, NUMERO), 
 pallSottoQuellaMossa(PALLINA2, COLORE2) :- muoviPallinaInConten(PALLINA,CONTENITORE,_), pallinaNelContenitore(PALLINA,CONTENITORE2,POSIZIONE), pallEstraibileDaCont(PALLINA,CONTENITORE2), pallinaNelContenitore(PALLINA2,CONTENITORE2,POSIZIONE2), POSIZIONE2 = POSIZIONE - 1, 
 pallina(COLORE2, PALLINA2).
 
+
 % Definisco se la mossa che faccio mi libera un contenitore in colorazione problema heap
 mossaLiberaContCol :-  muoviPallinaInConten(PALLINA,_,_), pallinaNelContenitore(PALLINA,CONTENITORE,POSIZIONE),
 not nPallineInContenitore(CONTENITORE,1), Y = POSIZIONE - 1, pallinaNelContenitore(P1,CONTENITORE,1), pallina(COLORE1, P1),
-#count{P2 : pallinaNelContenitore(P2,CONTENITORE, POSIZIONEY), pallina(COLORE, P2),POSIZIONEY <= Y, COLORE1 = COLORE} = N2.
+#count{P2 : pallinaNelContenitore(P2,CONTENITORE, POSIZIONEY), pallina(COLORE, P2),POSIZIONEY <= Y, COLORE1 = COLORE} = Y.
+
 
 %vecchia versione
 %mossaLiberaContCol :- muoviPallinaInConten(PALLINA,_,_), pallinaNelContenitore(PALLINA,CONTENITORE,POSIZIONE), 
@@ -64,33 +70,37 @@ CONTENITOREFROM != CONTENITORETO, not contenitoreColorato(CONTENITOREFROM).
 :- #count{PALLINA,CONTENITORE, POS : muoviPallinaInConten(PALLINA, CONTENITORE, POS)} > 1.
 :- #count{PALLINA,CONTENITORE, POS : muoviPallinaInConten(PALLINA, CONTENITORE, POS)} < 1.
 
+% Non puoi muovere una pallina che hai appena spostato
+:- muoviPallinaInConten(PALLINA,_,_), pallinaMossaPrecedentemente(PALLINA).
+
 % R1: solo palline dello stesso colore possono essere messe sopra un altra
-:- muoviPallinaInConten(PALLINA,CONTENITORE,POSIZIONE),pallina(COLORE2, PALLINA),ultimoColoreCont(CONTENITORE, COLORE),
+:- muoviPallinaInConten(PALLINA,CONTENITORE,POSIZIONE),pallina(COLORE2, PALLINA),ultimoColoreCont(CONTENITORE, COLORE), ultimaPosContenitLib(CONTENITORE,_),
 not contenitoreVuoto(CONTENITORE), COLORE != COLORE2.
 
 % R2: Ogni contenitore dovrebbe contenere palline dello stesso colore
-:~ not mossaPerRiempCol. [1:5]
 :~ not mossaPerColorare. [1:7]
+:~ not mossaPerRiempCol. [1:5]
 :~ mossaPerColorare, muoviPallinaInConten(PALLINA,CONTENITORE,POSIZIONE), nPalline(N), X = N - POSIZIONE. [X:6]
 %:~ muoviPallinaInConten(PALLINA,CONTENITORE,POSIZIONE), nPalline(N), X = N-POSIZIONE, not mossaPerColorare. [X:6]
 
-% W1: PREFERISCI MUOVERE UNA PALLINA CHE CONDIVIDE IL COLORE CON ALTRE ESTRAIBILI
+% W1: Non voglio muovere un pallina che è in un contenitore vuoto per metterlo in un contenitore vuoto
+:~ muoviPallinaInConten(PALLINA,_,1), pallinaNelContenitore(PALLINA,CONTENITORE,1). [1:7]
+
+% W2: PREFERISCI MUOVERE UNA PALLINA CHE CONDIVIDE IL COLORE CON ALTRE ESTRAIBILI
 :~muoviPallinaInConten(PALLINA,CONTENITORE,POSIZIONE), pallina(COLOREY, PALLINA), ultimoColoreCont(CONTENITOREY, COLORE),
-COLORE != COLOREY, CONTENITORE!=CONTENITOREY.[1:3]
-% W2: PREFERISCI MUOVERE UNA PALLINA CHE LIBERA UNA PALLINA DELLO STESSO COLORE
+COLORE != COLOREY, CONTENITORE!=CONTENITOREY.[1:4]
+
+% W3: PREFERISCI MUOVERE UNA PALLINA CHE LIBERA CONTENITORE IN COLORAZIONE
+:~ not mossaLiberaContCol. [1:3]
+
+
+% W4: PREFERISCI MUOVERE UNA PALLINA CHE LIBERA UNA PALLINA CHE PUò MAGGIORMENTE SPOSTARSI
+:~ pallSottoQuellaMossa(PALLINA, COLORE) , pallEstraibileDaCont(PALLINA2,_), pallina(COLORE2,PALLINA2), COLORE2 != COLORE. [1:2]
+
+% W5: PREFERISCI MUOVERE UNA PALLINA CHE LIBERA UNA PALLINA DELLO STESSO COLORE
 %:~muoviPallinaInConten(PALLINA,CONTENITOREY,_),pallinaNelContenitore(PALLINA,CONTENITORE, POSIZIONE), pallina(COLORE, PALLINA),pallina(COLOREY, PALLINA2), pallinaNelContenitore(PALLINA2,CONTENITORE2, Y),
 %COLORE != COLOREY, CONTENITORE = CONTENITORE2, Y = POSIZIONE -1.[1:1]
 :~ pallSottoQuellaMossa(PALLINA2, COLORE2), muoviPallinaInConten(PALLINA,CONTENITORE,POSIZIONE), pallina(COLORE, PALLINA), COLORE != COLORE2. [1:1]
-% W3: PREFERISCI MUOVERE UNA PALLINA CHE LIBERA UNA PALLINA CHE PUò MAGGIORMENTE SPOSTARSI
-:~ pallSottoQuellaMossa(PALLINA, COLORE) , pallEstraibileDaCont(PALLINA2,_), pallina(COLORE2,PALLINA2), COLORE2 != COLORE. [1:2]
-% W4: PREFERISCI MUOVERE UNA PALLINA CHE LIBERA CONTENITORE IN COLORAZIONE
-:~ not mossaLiberaContCol. [1:4]
-
-% Non voglio muovere un pallina che è in un contenitore vuoto per metterlo in un contenitore vuoto
-:~ muoviPallinaInConten(PALLINA,_,1), pallinaNelContenitore(PALLINA,CONTENITORE,1). [1:6]
-
-
-:- muoviPallinaInConten(PALLINA,_,_), pallinaMossaPrecedentemente(PALLINA).
 
 
 

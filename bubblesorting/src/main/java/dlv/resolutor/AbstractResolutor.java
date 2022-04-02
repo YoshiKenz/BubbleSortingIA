@@ -32,9 +32,9 @@ public abstract class AbstractResolutor {
 		
 		List<String> arguments = new ArrayList<>();
 		String[] split = atom.split(type);
-		String[] split1 = split[1].substring(1, split[1].length()-1).split(",");
+		split = split[1].substring(1, split[1].length()-1).split(",");
 		
-		for (String string : split1) 
+		for (String string : split) 
 			arguments.add(string);
 		
 		return arguments;

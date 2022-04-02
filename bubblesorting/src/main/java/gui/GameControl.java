@@ -28,8 +28,7 @@ public class GameControl extends JPanel {
 	private Game game;
 	
 	private Updater updater;
-	
-	
+
 
 	public GameControl(Window window) {
 		this.window = window;
@@ -37,7 +36,7 @@ public class GameControl extends JPanel {
 		this.updater = new Updater(this);
 		this.setBackground(Color.white);
 		addKeyboard();
-		//this.updater.start();
+		this.updater.start();
 		
 		
 	}
@@ -96,12 +95,15 @@ public class GameControl extends JPanel {
 			Container container = containers.get(key);
 			g2d.drawImage(MediaProvider.get().getContainer(), currentX, currentY, this);
 			drawBalls(g2d, container.getListBalls(), currentX, currentY);
+			if (game.getContainerChoosedFrom() != null && key.equals(game.getContainerChoosedFrom())) {
+				drawBallChoosed(g2d, this.game.getBallChoosed(), currentX, currentY);
+			}
 			contContainerInRow++;
 			currentX = currentX + (CommonConstants.CONTAINER_WIDTH + (CommonConstants.CONTAINER_WIDTH/2));
 			if (contContainerInRow >= changeRowAt) {
 				currentY = currentY + (CommonConstants.CONTAINER_HEIGHT * 2);
 				contContainerInRow = 0;
-				currentX = startX;
+				currentX = startX + CommonConstants.CONTAINER_WIDTH - (CommonConstants.BALL_IN_CONTAINER_OFF_SET_X * (CommonConstants.LIMIT_CONTAINER_IN_ROW - (this.game.getnContainers() - changeRowAt)) );
 			}
 		}
 		
@@ -110,9 +112,14 @@ public class GameControl extends JPanel {
 	private void drawBalls(Graphics2D g2d, LinkedList<Ball> balls, int xContainer, int yContainer) {
 		int currentY = (yContainer + CommonConstants.CONTAINER_HEIGHT) - CommonConstants.BALL_IN_CONTAINER_OFF_SET_Y;
 		for (Ball ball : balls) {
-			currentY = currentY - CommonConstants.BALL_HEIGHT;
+			currentY = currentY - (CommonConstants.BALL_HEIGHT);
 			MediaProvider.get().drawCircleColored(ball.getColour(), g2d, xContainer + CommonConstants.BALL_IN_CONTAINER_OFF_SET_X, currentY);
 		}
+	}
+	
+	private void drawBallChoosed(Graphics2D g2d, Ball ball, int xContainer, int yContainer) {
+		int currentY = yContainer - (CommonConstants.BALL_HEIGHT + 5);
+		MediaProvider.get().drawCircleColored(ball.getColour(), g2d, xContainer + CommonConstants.BALL_IN_CONTAINER_OFF_SET_X, currentY);
 	}
 	
 }

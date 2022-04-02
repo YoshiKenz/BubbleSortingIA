@@ -4,10 +4,7 @@ import gui.GameControl;
 
 public class Updater extends Thread {
 	
-	private long lastTime;
-	private final double amountOfTicks;
-	private double ns;
-	private double delta;
+	
 
 	private boolean running;
 	private boolean play;
@@ -18,10 +15,7 @@ public class Updater extends Thread {
 	public Updater(GameControl gameControl) {
 		this.gameControl = gameControl;
 		this.game = gameControl.getGame();
-		amountOfTicks = 60.0;
-		ns = 1000000000 / amountOfTicks;
-		delta = 0;
-		lastTime = System.nanoTime();
+	
 		running = true;
 		play = true;
 	}
@@ -30,16 +24,30 @@ public class Updater extends Thread {
 	public void run() {
 		while (running) {
 			long now = System.nanoTime();
-			delta += (now - lastTime) / ns;
-			lastTime = now;
-			if (delta >= 1) {
+			
 				if (play) {
-					//game.update();
-					//control.update();
+					//TODO
+					//interrogo l' ia per capire la mossa migliore
+					//aggiorno il gioco, pop() sul container che rimuove la pallina da spostare
+					//repaint() del gameControl
+					//aggiorno il gioco, aggiungo nel container la pallina spostata
+					//repaint() del gameControl
+					//ogni quanti secondi??
+					this.game.play();
+					System.out.println("*** AGGIORNO LA GRAFICA");
 					
+					
+					this.gameControl.repaint();
+					
+					sleep();
+					
+					this.game.doMove();
+					this.gameControl.repaint();
+					
+					sleep();
 				}
-				delta--;
-			}
+				
+			
 		}
 	}
 	
@@ -61,5 +69,13 @@ public class Updater extends Thread {
 
 	public void resumeGame() {
 		play = true;
+	}
+	
+	private void sleep() {
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 	}
 }

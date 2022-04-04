@@ -120,7 +120,7 @@ public class Game {
 	private void readFromProperties() {
 		InputStream input;
 		try {
-			input = new FileInputStream("other/hard.properties");
+			input = new FileInputStream("other/medium.properties");
 			Properties prop = new Properties();
 	        prop.load(input);
 			nBalls = Integer.valueOf(prop.getProperty("number.ball"));

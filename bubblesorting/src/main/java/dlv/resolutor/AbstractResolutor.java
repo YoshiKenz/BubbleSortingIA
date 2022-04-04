@@ -17,6 +17,7 @@ public abstract class AbstractResolutor {
 	InputProgram facts;
 	InputProgram encoding;
 		
+	
 	public AbstractResolutor() {
 		handler = new DesktopHandler(new DLVDesktopService(service));
 		facts = new ASPInputProgram();

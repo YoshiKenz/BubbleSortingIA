@@ -3,9 +3,6 @@ package core;
 import gui.GameControl;
 
 public class Updater extends Thread {
-	//noconflitto
-	
-	//conflitto datto
 	private boolean running;
 	private boolean play;
 

@@ -4,7 +4,8 @@ import gui.GameControl;
 
 public class Updater extends Thread {
 	
-	
+	//noconflitto
+	//conflitto yoshi
 
 	private boolean running;
 	private boolean play;

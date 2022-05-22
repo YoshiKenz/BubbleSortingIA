@@ -17,6 +17,13 @@ public class Window extends JFrame {
 		//setFullScreen();
 		this.setVisible(true);
 		this.pack();
+		//al click quit della finestra chiude il processo
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		    	System.exit(0);   
+		    }
+		});
 	}
 
 	public void changeScreen(Component component) {

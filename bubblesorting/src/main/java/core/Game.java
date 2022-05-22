@@ -26,6 +26,7 @@ public class Game {
 	private String containerChoosedTo; 
 	private Ball ballChoosed;
 	private String ballMovedLast;
+	private int numMosse;
 	
 	
 	
@@ -37,7 +38,11 @@ public class Game {
 		if (containerChoosedFrom != null) {
 			ballChoosed = mapContainers.get(containerChoosedFrom).getListBalls().pop();
 		}
-		
+		numMosse = 0;
+	}
+	
+	public int getNumMosse() {
+		return numMosse;
 	}
 	
 	public int getnBalls() {
@@ -87,6 +92,8 @@ public class Game {
 		ballChoosed = null;
 		containerChoosedFrom = null;
 		containerChoosedTo = null;
+		numMosse++;
+		System.out.println("Numero Mosse :" + numMosse);
 	}
 	
 	
@@ -120,7 +127,7 @@ public class Game {
 	private void readFromProperties() {
 		InputStream input;
 		try {
-			input = new FileInputStream("other/medium.properties");
+			input = new FileInputStream("other/hard_7.properties");
 			Properties prop = new Properties();
 	        prop.load(input);
 			nBalls = Integer.valueOf(prop.getProperty("number.ball"));

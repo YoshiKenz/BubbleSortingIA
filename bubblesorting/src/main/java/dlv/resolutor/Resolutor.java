@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import dlv.facts.DLVBall;
 import dlv.facts.DLVBallInContainer;
 import dlv.facts.DLVBallMoved;
 import dlv.facts.DLVContainer;
@@ -71,8 +70,7 @@ public class Resolutor extends AbstractResolutor {
 					int position = 1;
 					Container container = mapContainers.get(key);
 					for(Ball ball : container.getListBalls()) {
-						facts.addObjectInput(new DLVBall(ball.getColour(), ball.getId()));
-						facts.addObjectInput(new DLVBallInContainer(ball.getId(), key, position));
+						facts.addObjectInput(new DLVBallInContainer(ball.getId(), key, position, ball.getColour()));
 						if (ballMovedLast != null) {
 							facts.addObjectInput(new DLVBallMoved(ballMovedLast));
 						}
@@ -88,6 +86,7 @@ public class Resolutor extends AbstractResolutor {
 			}
 		}
 		handler.addProgram(facts);
+		System.out.println(facts.getPrograms());
 	}
 	
 	

@@ -12,13 +12,16 @@ public class DLVBallInContainer {
 	private String idContainer;
 	@Param(2)
 	private int position;
+	@Param(3)
+	private String colourBall;
 	
 	public DLVBallInContainer() {}
 	
-	public DLVBallInContainer(String idBall, String idContainer, int position) {
+	public DLVBallInContainer(String idBall, String idContainer, int position, String colourBall) {
 		this.idBall = idBall;
 		this.idContainer = idContainer;
 		this.position = position;
+		this.colourBall = colourBall;
 	}
 	
 	public String getIdBall() {
@@ -38,5 +41,12 @@ public class DLVBallInContainer {
 	}
 	public void setPosition(int position) {
 		this.position = position;
+	}
+	public String getColourBall() {
+		return colourBall;
+	}
+
+	public void setColourBall(String colourBall) {
+		this.colourBall = colourBall;
 	}
 }

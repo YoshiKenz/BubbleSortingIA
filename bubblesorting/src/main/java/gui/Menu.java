@@ -32,9 +32,9 @@ public class Menu extends JPanel {
 		this.setPreferredSize(new Dimension(Config.SCREEN_WIDTH, Config.SCREEN_HEIGHT));
 		this.setLayout(new BorderLayout());
 
-		play = new Button(textButtonPlay, new Color(0, 100, 0));
-		quit = new Button(textButtonQuit, new Color(153, 0, 0));
-
+		play = new Button(textButtonPlay, new Color(255, 255, 255));
+		quit = new Button(textButtonQuit, new Color(255, 255, 255));
+		
 		initLayoutPanels();
 		buttonCommand(window);
 

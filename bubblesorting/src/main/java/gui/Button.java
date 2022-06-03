@@ -4,11 +4,11 @@ package gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 
 import javax.swing.JButton;
 
 import utils.Config;
+import utils.MediaProvider;
 
 public class Button extends JButton {
 
@@ -18,7 +18,7 @@ public class Button extends JButton {
 		super(name);
 		int widthButton = (Config.SCREEN_WIDTH / 3) / 2;
 		this.setMaximumSize(new Dimension(widthButton, Config.SCREEN_HEIGHT / 12));
-		this.setFont(new Font("Elephant", Font.BOLD, 24));
+		this.setFont(MediaProvider.get().Font());
 		this.setForeground(color);
 		this.setAlignmentX(Component.CENTER_ALIGNMENT);
 		this.setContentAreaFilled(false);

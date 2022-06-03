@@ -6,7 +6,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -19,7 +22,6 @@ public class Game {
 
 	private int nBalls;
 	private int nContainers;
-	private int level;
 	private LinkedHashMap<String, Container> mapContainers;
 	private HashMap<String, Integer> mapColourBallsCreated;
 	private String containerChoosedFrom;
@@ -27,6 +29,7 @@ public class Game {
 	private Ball ballChoosed;
 	private String ballMovedLast;
 	private int numMosse;
+
 	
 	
 	
@@ -72,15 +75,28 @@ public class Game {
 	public String getContainerChoosedTo() {
 		return containerChoosedTo;
 	}
+	
 
 	public void play() {
 		//interrogo l' ia, faccio il pop sul container della pallina scelta e la setto nei campi choosed
 		Resolutor resolutor = new Resolutor();
 		
-		String[] solution = resolutor.solve(mapContainers, ballMovedLast);
+		List<String> solution = resolutor.solve(mapContainers, ballMovedLast);
 		
 		
 		processSolution(solution);
+	}
+	
+	public boolean getWin() {
+		Set<String> keys = mapContainers.keySet();
+        
+		for (String key : keys) {
+            Container container = mapContainers.get(key);
+            if(!container.getListBalls().isEmpty() && !container.getColoured()) {
+            	return false;
+            }
+        }
+        return true;
 	}
 	
 	public void doMove() {
@@ -98,36 +114,39 @@ public class Game {
 	
 	
 	
-	private void processSolution(String[] solution) {
-		String ballChoosedId = solution[0].replace("\"", "");
-		containerChoosedTo = solution[1].replace("\"", "");
-		
-		for (String key : mapContainers.keySet()) {
+	private void processSolution(List<String> solution) {
+		if (!solution.isEmpty()) {
+			String ballChoosedId = solution.get(0).replace("\"", "");
+			containerChoosedTo = solution.get(1).replace("\"", "");
 			
-			LinkedList<Ball> listBalls = mapContainers.get(key).getListBalls();
-			
-			if (!(listBalls.isEmpty()) && ballChoosedId.equals(listBalls.peekLast().getId())) {
-				containerChoosedFrom = key;
-				System.out.println("VOGLIO MUOVERE LA PALLINA DAL CONTENITORE " + containerChoosedFrom + " AL " + containerChoosedTo);
-
-				ballChoosed = listBalls.removeLast();
-				break;
-			}
-			
-			/*for (Ball ball : mapContainers.get(key).getListBalls()) {
-				if (ball.getId().equals(ballChoosedId)) {
-					ballChoosed = ball;
+			for (String key : mapContainers.keySet()) {
+				
+				LinkedList<Ball> listBalls = mapContainers.get(key).getListBalls();
+				
+				if (!(listBalls.isEmpty()) && ballChoosedId.equals(listBalls.peekLast().getId())) {
 					containerChoosedFrom = key;
-					mapContainers.get(containerChoosedFrom).getListBalls().pop();
+					System.out.println("VOGLIO MUOVERE LA PALLINA DAL CONTENITORE " + containerChoosedFrom + " AL " + containerChoosedTo);
+	
+					ballChoosed = listBalls.removeLast();
+					break;
 				}
-			}*/
+				
+				/*for (Ball ball : mapContainers.get(key).getListBalls()) {
+					if (ball.getId().equals(ballChoosedId)) {
+						ballChoosed = ball;
+						containerChoosedFrom = key;
+						mapContainers.get(containerChoosedFrom).getListBalls().pop();
+					}
+				}*/
+			}
 		}
+		
 	}
 
 	private void readFromProperties() {
 		InputStream input;
 		try {
-			input = new FileInputStream("other/hard_7.properties");
+			input = new FileInputStream("other/easy.properties");
 			Properties prop = new Properties();
 	        prop.load(input);
 			nBalls = Integer.valueOf(prop.getProperty("number.ball"));
@@ -141,11 +160,12 @@ public class Game {
 					fillContainer(container, ballsFromProperties);
 				}
 			});
-			
+			if (validateContainers() == false) {
+				erroreProprieta();
+			};
 			
 		} catch (IOException e) {
-			if (OptionPopup.error_popup("errore nel caricamento delle proprietà") == JOptionPane.OK_OPTION)
-				System.exit(0);
+			erroreProprieta();
 			e.printStackTrace();
 		}
 	}
@@ -176,6 +196,28 @@ public class Game {
 			container.getListBalls().add(ball);
 		}
 		
+	}
+	
+	private boolean validateContainers() {
+		boolean validate = true;
+		int nStart = 0;
+		int i = 0;
+		for(Entry<String, Integer> entry: mapColourBallsCreated.entrySet()) {
+			if (i == 0) {
+				nStart = entry.getValue();
+			} else if (nStart != entry.getValue()) {
+				validate = false;
+				break;
+			}
+			i++;
+	    }
+		
+		return validate;
+	}
+	
+	private void erroreProprieta() {
+		if (OptionPopup.error_popup("errore nel caricamento delle proprietà") == JOptionPane.OK_OPTION)
+			System.exit(0);
 	}
 
 }

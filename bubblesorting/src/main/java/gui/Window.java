@@ -14,7 +14,7 @@ public class Window extends JFrame {
 	private void initFrame() {
 		this.add(new Menu(this));
 		//TODO commentato per fase di sviluppo
-		//setFullScreen();
+		setFullScreen();
 		this.setVisible(true);
 		this.pack();
 		//al click quit della finestra chiude il processo

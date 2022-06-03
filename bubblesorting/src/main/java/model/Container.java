@@ -1,6 +1,8 @@
 package model;
 
 import java.util.LinkedList;
+
+import gui.CommonConstants;
 //63x173
 public class Container {
 
@@ -29,6 +31,22 @@ public class Container {
 
 	public void setListBalls(LinkedList<Ball> listaPalline) {
 		this.listBalls = listaPalline;
+	}
+	
+	//metodo che restituisce true se il contenitore è completo e colorato
+	public boolean getColoured() {
+		String colourTemp = listBalls.get(0).getColour();
+		int cont = 0;
+		for(Ball ball : listBalls) {
+			if(ball.getColour().equals(colourTemp)) {
+				cont++;
+			}	
+		}
+		if (cont == CommonConstants.NUM_BALLS_FOR_COLOUR) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 }

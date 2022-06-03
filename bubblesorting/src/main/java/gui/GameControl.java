@@ -88,9 +88,17 @@ public class GameControl extends JPanel {
 		int currentY = startY;
 		int contContainerInRow = 0;
 		int changeRowAt = containers.size();
+		int offSetXRow = 0;
+		
 		if (containers.size() > CommonConstants.LIMIT_CONTAINER_IN_ROW) {
-			changeRowAt = containers.size()/2 + 1;
-		} 
+			if ((containers.size() % 2) == 0) {
+				changeRowAt = containers.size() / 2;
+			} else {
+				changeRowAt = containers.size()/2 + 1;
+				offSetXRow = CommonConstants.CONTAINER_WIDTH - (CommonConstants.BALL_IN_CONTAINER_OFF_SET_X * (CommonConstants.LIMIT_CONTAINER_IN_ROW - (this.game.getnContainers() - changeRowAt)));
+			}
+			
+		}
 		for (String key : containers.keySet()) {
 			Container container = containers.get(key);
 			g2d.drawImage(MediaProvider.get().getContainer(), currentX, currentY, this);
@@ -103,7 +111,7 @@ public class GameControl extends JPanel {
 			if (contContainerInRow >= changeRowAt) {
 				currentY = currentY + (CommonConstants.CONTAINER_HEIGHT * 2);
 				contContainerInRow = 0;
-				currentX = startX + CommonConstants.CONTAINER_WIDTH - (CommonConstants.BALL_IN_CONTAINER_OFF_SET_X * (CommonConstants.LIMIT_CONTAINER_IN_ROW - (this.game.getnContainers() - changeRowAt)) );
+				currentX = startX +  offSetXRow;
 			}
 		}
 		
@@ -122,4 +130,29 @@ public class GameControl extends JPanel {
 		MediaProvider.get().drawCircleColored(ball.getColour(), g2d, xContainer + CommonConstants.BALL_IN_CONTAINER_OFF_SET_X, currentY);
 	}
 	
+	public void setGameWin() {
+		JPanel panel = new JPanel() {
+
+			private static final long serialVersionUID = 4829165578867574065L;
+
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				g.drawImage(MediaProvider.get().Win(), 0, 0, Config.SCREEN_WIDTH, Config.SCREEN_HEIGHT, null);
+			}
+		}; 
+		window.changeScreen(panel);
+	}
+	
+	public void setGameOver() {
+		JPanel panel = new JPanel() {
+			
+			private static final long serialVersionUID = 1597645967085379357L;
+
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				g.drawImage(MediaProvider.get().Over(), 0, 0, Config.SCREEN_WIDTH, Config.SCREEN_HEIGHT, null);
+			}
+		}; 
+		window.changeScreen(panel);
+	}
 }

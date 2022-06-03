@@ -1,5 +1,6 @@
 package dlv.resolutor;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -24,35 +25,23 @@ public class Resolutor extends AbstractResolutor {
 	}
 	
 	// restituisce due stringhe, la pallina da spostare e il contenitore
-	public String[] solve(LinkedHashMap<String, Container> mapContainers, String ballMovedLast) {
+	public List<String> solve(LinkedHashMap<String, Container> mapContainers, String ballMovedLast) {
 		addFacts(mapContainers, ballMovedLast);
 		encodeProgram(encodingResource);
-		String[] solution = new String[2];
+		List<String> solution = new ArrayList<String>();
 		AnswerSets answers = (AnswerSets) handler.startSync();
 		
 		try {
 			for (AnswerSet a : answers.getAnswersets()) {
 				
-				//non si può ricevere direttamente gli atomi della soluzione non in edb?
-				/*for(Object obj : a.getAtoms()) {
-			          if(obj instanceof DLVMoveBallInContainer) {
-			           solution[0] = ((DLVMoveBallInContainer)obj).getIdBall();
-			           solution[1] = ((DLVMoveBallInContainer)obj).getIdContainer();
-			          }
-			        }
-				break;*/
-				
 				for(String atom : a.getAnswerSet()) {
-					if (atom.matches(Config.GUESS + "(.*)")) {
-						List<String> termsAtom = parseAtom(atom, Config.GUESS);
-						solution[0] = termsAtom.get(0);
-						solution[1] = termsAtom.get(1);
+					if (atom.matches(Config.GUESS_ATOM + "(.*)")) {
+						List<String> termsAtom = parseAtom(atom, Config.GUESS_ATOM);
+						solution.add(termsAtom.get(0));
+						solution.add(termsAtom.get(1));
 						break;
 					}
-					
 				}
-				
-				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -74,10 +63,8 @@ public class Resolutor extends AbstractResolutor {
 						if (ballMovedLast != null) {
 							facts.addObjectInput(new DLVBallMoved(ballMovedLast));
 						}
-						
 						position++;
 					}
-					
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,6 +1,8 @@
 package utils;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
@@ -29,6 +31,7 @@ public class MediaProvider {
 	private BufferedImage over;
 	private BufferedImage container;
 	private HashMap<Color, Ellipse2D.Double> mapColoredBallCreated = new HashMap<>();
+	private Font font;
 	
 	
 	private MediaProvider() {
@@ -36,6 +39,7 @@ public class MediaProvider {
 		win = loadImage("win");
 		over = loadImage("gameOver");
 		container = loadImage("contenitore");
+		font = loadFont();
 		//container = loadImage("container");
 	}
 	
@@ -51,6 +55,19 @@ public class MediaProvider {
 		return img;
 	}
 	
+	private Font loadFont() {
+		Font font = null;
+		try {
+			font = Font.createFont(Font.TRUETYPE_FONT, new File(Config.PATH_NAME_FONT + ".ttf")).deriveFont(15f);
+			
+		} catch (FontFormatException | IOException e) {
+			if (OptionPopup.error_popup("errore nel caricamento del formato") == JOptionPane.OK_OPTION)
+				System.exit(0);
+			e.printStackTrace();
+		}
+		return font;
+	}
+	
 	public BufferedImage Menu() {
 		return menu;
 	}
@@ -61,6 +78,10 @@ public class MediaProvider {
 	
 	public BufferedImage Over() {
 		return over;
+	}
+	
+	public Font Font() {
+		return font;
 	}
 	
 	public BufferedImage getContainer() {
